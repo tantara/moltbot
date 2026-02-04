@@ -1,11 +1,11 @@
+import type { OpenClawConfig } from "../../config/config.js";
+import type { RuntimeEnv } from "../../runtime.js";
 import {
   ensureAuthProfileStore,
   resolveApiKeyForProfile,
   resolveAuthProfileOrder,
 } from "../../agents/auth-profiles.js";
 import { resolveEnvApiKey } from "../../agents/model-auth.js";
-import type { OpenClawConfig } from "../../config/config.js";
-import type { RuntimeEnv } from "../../runtime.js";
 
 export type NonInteractiveApiKeySource = "flag" | "env" | "profile";
 
@@ -22,14 +22,18 @@ async function resolveApiKeyFromProfiles(params: {
   });
   for (const profileId of order) {
     const cred = store.profiles[profileId];
-    if (cred?.type !== "api_key") continue;
+    if (cred?.type !== "api_key") {
+      continue;
+    }
     const resolved = await resolveApiKeyForProfile({
       cfg: params.cfg,
       store,
       profileId,
       agentDir: params.agentDir,
     });
-    if (resolved?.apiKey) return resolved.apiKey;
+    if (resolved?.apiKey) {
+      return resolved.apiKey;
+    }
   }
   return null;
 }
